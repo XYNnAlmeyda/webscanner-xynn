@@ -26,14 +26,6 @@ def scan_website():
 
     return render_template("scan_results.html", vulnerabilities=vulnerabilities)
 
-logging.basicConfig(level=logging.DEBUG)
-
-def scan_website(url):
-    discovered_urls = discover_urls(url)
-    print(f"Discovered {len(discovered_urls)} URLs on {url}:\n")
-    for i, discovered_url in enumerate(discovered_urls, start=1):
-        print(f"{i}. {discovered_url}")
-
 def discover_urls(url):
     discovered_urls = []
     try:
@@ -80,7 +72,5 @@ def is_xss_vulnerable(url):
 def has_insecure_configuration(url):
     return not url.startswith("https")
 
-    return render_template('scan_results.html', vulnerabilities=vulnerabilities)
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()
