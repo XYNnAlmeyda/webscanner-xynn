@@ -73,4 +73,4 @@ def has_insecure_configuration(url):
     return not url.startswith("https")
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="1.1.1.1", port=2710)
