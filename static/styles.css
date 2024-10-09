@@ -33,3 +33,7 @@ ul {
    width: 100%; /* Adjust width */
    text-align: center;
 }
+
+input{
+   color: black;
+}
