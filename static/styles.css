@@ -28,3 +28,8 @@ form {
 button {
    color: black;
 }
+ul {
+   padding: 0;
+   width: 100%; /* Adjust width */
+   text-align: center;
+}
