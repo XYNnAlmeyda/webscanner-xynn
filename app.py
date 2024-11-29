@@ -152,23 +152,30 @@ def is_path_traversal_vulnerable(url):
     return False
 
 def is_csrf_vulnerable(url):
-    # Send a POST request with malicious payload
-    payload = "<script>alert('CSRF')</script>"
-    response = requests.post(url, data={"input": payload})
-
-    # Check if the malicious payload was accepted without CSRF protection
-    if "<script>alert('CSRF')</script>" in response.text:
-        return True
+    payloads = [
+        "<script>alert('CSRF')</script>",
+        "<img src=x onerror=alert('CSRF')>",
+        "<svg/onload=alert('CSRF')>",
+        "javascript:alert('CSRF')"
+    ]
+    for payload in payloads:
+        response = requests.post(url, data={"input": payload})
+        if payload in response.text:
+            return True
     return False
 
 def is_idor_vulnerable(url):
-    # Attempt to access a resource or perform an action on behalf of another user
-    user_id = "123"  # Replace with a valid user ID
-    response = requests.get(url + "/user/" + user_id)
-
-    # Check if the response contains sensitive information or allows unauthorized access
-    if "Secret data" in response.text:
-        return True
+    payloads = [
+        "123",
+        "456",
+        "789",
+        "012",
+        "345"
+    ]
+    for payload in payloads:
+        response = requests.get(url + "/user/" + payload)
+        if "Secret data" in response.text:
+            return True
     return False
 
 def is_lfi_vulnerable(url):
